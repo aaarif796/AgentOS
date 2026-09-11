@@ -26,6 +26,19 @@ Production-oriented foundation for a model-agnostic multi-agent operating system
 - pre-commit
 - GitHub Actions
 
+## Inventory
+
+Current runtime contents (see `agentos doctor` / `agentos agents` / `agentos skills`):
+
+| Asset  | Count | Details |
+| ------ | :---: | ------- |
+| Agents |  10   | orchestrator, planner, software-architect, developer, researcher, code-reviewer, tester, security-auditor, documentation-writer, devops-engineer |
+| Skills |  22   | python, javascript, typescript, git, clean-code, system-design, api-design, database-design, unit-testing, integration-testing, tdd, owasp, secrets-management, dependency-security, authentication, docker, ci-cd, linux, web-research, source-evaluation, summarization, technical-documentation |
+| Models |   3   | openai/gpt-4o-mini (default), anthropic/claude-3-5-haiku-latest (fallback), gemini/gemini-2.0-flash (fallback) |
+| Tools  |   4   | filesystem, terminal, git, http |
+| Hooks  |   2   | audit, error-log |
+| Rules  |   5   | security-first, least-privilege, truthful-output, checkpoint, evolution-gated |
+
 ## Quickstart
 
 ```bash
