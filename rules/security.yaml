@@ -1,0 +1,4 @@
+id: security-first
+enabled: true
+priority: 10
+description: Never bypass permission checks.

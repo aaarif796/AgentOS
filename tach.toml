@@ -1,0 +1,153 @@
+# Tach module boundary configuration
+# Docs: https://github.com/gauge-sh/tach
+# Run `tach check` from the repository root to enforce these boundaries.
+
+exclude = [
+    "**/__pycache__",
+    "**/tests",
+    "**/.venv",
+    "**/.mypy_cache",
+    "**/.ruff_cache",
+    "**/.pytest_cache",
+]
+source_roots = [
+    "src",
+]
+
+# Root sentinel: unclassified code may not depend on declared modules.
+[[modules]]
+path = "*"
+depends_on = []
+
+# ---------------------------------------------------------------------------
+# Domain primitives: no internal dependencies
+# ---------------------------------------------------------------------------
+[[modules]]
+path = "agentos.models"
+depends_on = []
+depends_on_external = ["pydantic"]
+
+[[modules]]
+path = "agentos.events"
+depends_on = []
+
+[[modules]]
+path = "agentos.logging"
+depends_on = []
+depends_on_external = ["structlog"]
+
+[[modules]]
+path = "agentos.settings"
+depends_on = []
+depends_on_external = ["pydantic", "pydantic_settings"]
+
+[[modules]]
+path = "agentos.rules"
+depends_on = []
+
+# ---------------------------------------------------------------------------
+# Infrastructure: built on domain primitives
+# ---------------------------------------------------------------------------
+[[modules]]
+path = "agentos.registry"
+depends_on = ["agentos.models"]
+depends_on_external = ["pydantic"]
+
+[[modules]]
+path = "agentos.security"
+depends_on = ["agentos.models"]
+depends_on_external = ["pydantic"]
+
+[[modules]]
+path = "agentos.gateway"
+depends_on = ["agentos.models"]
+depends_on_external = ["httpx", "pydantic"]
+
+[[modules]]
+path = "agentos.store"
+depends_on = ["agentos.models"]
+depends_on_external = ["aiosqlite", "pydantic"]
+
+[[modules]]
+path = "agentos.router"
+depends_on = ["agentos.models", "agentos.registry"]
+depends_on_external = ["pydantic"]
+
+[[modules]]
+path = "agentos.evolution"
+depends_on = ["agentos.models", "agentos.registry"]
+depends_on_external = ["pydantic"]
+
+[[modules]]
+path = "agentos.tools"
+depends_on = ["agentos.models", "agentos.security"]
+depends_on_external = ["httpx", "pydantic"]
+
+[[modules]]
+path = "agentos.hooks"
+depends_on = ["agentos.events"]
+
+[[modules]]
+path = "agentos.builtin_hooks"
+depends_on = ["agentos.events"]
+depends_on_external = ["structlog"]
+
+# ---------------------------------------------------------------------------
+# Orchestration layer
+# ---------------------------------------------------------------------------
+[[modules]]
+path = "agentos.orchestrator"
+depends_on = [
+    "agentos.events",
+    "agentos.gateway",
+    "agentos.models",
+    "agentos.registry",
+    "agentos.router",
+    "agentos.rules",
+    "agentos.store",
+]
+depends_on_external = ["pydantic", "structlog"]
+
+# ---------------------------------------------------------------------------
+# Composition root and entry points
+# ---------------------------------------------------------------------------
+[[modules]]
+path = "agentos.runtime"
+depends_on = [
+    "agentos.builtin_hooks",
+    "agentos.events",
+    "agentos.evolution",
+    "agentos.gateway",
+    "agentos.hooks",
+    "agentos.logging",
+    "agentos.models",
+    "agentos.orchestrator",
+    "agentos.registry",
+    "agentos.router",
+    "agentos.rules",
+    "agentos.security",
+    "agentos.settings",
+    "agentos.store",
+    "agentos.tools",
+]
+depends_on_external = []
+
+[[modules]]
+path = "agentos.api"
+depends_on = ["agentos.runtime"]
+depends_on_external = ["fastapi", "pydantic"]
+
+[[modules]]
+path = "agentos.cli"
+depends_on = ["agentos.runtime"]
+depends_on_external = ["rich", "typer", "uvicorn"]
+
+# Dependencies declared for planned subsystems (see docs/ARCHITECTURE.md) that
+# are not yet imported by runtime code: YAML config, PostgreSQL+SQLAlchemy
+# backend, and tenacity-based retry/backoff.
+[external]
+exclude = [
+    "pyyaml",
+    "sqlalchemy",
+    "tenacity",
+]
