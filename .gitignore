@@ -6,3 +6,10 @@ __pycache__/
 .env
 *.db
 *.sqlite
+.coverage
+coverage.xml
+books/
+slides/
+workspace/
+memory*.db
+agentos*.db

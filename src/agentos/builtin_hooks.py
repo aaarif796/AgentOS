@@ -8,8 +8,8 @@ log = structlog.get_logger()
 
 
 class AuditHook:
-    name = "audit"
-    events = ("*",)
+    name: str = "audit"
+    events: tuple[str, ...] = ("*",)
 
     def __init__(self, audit_file: Path) -> None:
         self.audit_file = audit_file
@@ -26,8 +26,8 @@ class AuditHook:
 
 
 class ErrorLogHook:
-    name = "error-log"
-    events = ("MODEL_FAILED", "TOOL_FAILED", "TASK_FAILED")
+    name: str = "error-log"
+    events: tuple[str, ...] = ("MODEL_FAILED", "TOOL_FAILED", "TASK_FAILED")
 
     def handle(self, event: Event) -> None:
         log.error("agentos_error_event", event=event.type, **event.data)

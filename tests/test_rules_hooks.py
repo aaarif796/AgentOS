@@ -6,7 +6,7 @@ from agentos.hooks import HookManager
 from agentos.rules import default_rules
 
 
-def test_rules_and_audit(tmp_path: Path):
+def test_rules_and_audit(tmp_path: Path) -> None:
     bus = EventBus()
     hooks = HookManager(bus)
     audit = AuditHook(tmp_path / "audit.jsonl")

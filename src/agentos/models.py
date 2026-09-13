@@ -34,6 +34,20 @@ class DataClass(StrEnum):
     RESTRICTED = "restricted"
 
 
+class ModelTier(StrEnum):
+    LOCAL = "local"
+    FREE = "free"
+    PAID = "paid"
+
+
+class ModelPolicy(StrEnum):
+    LOCAL_FIRST = "local-first"
+    FREE_FIRST = "free-first"
+    HYBRID = "hybrid"
+    PAID_FIRST = "paid-first"
+    FREE_ONLY = "free-only"
+
+
 class AgentSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
     id: str
@@ -73,6 +87,28 @@ class ModelSpec(BaseModel):
     reliability: float = 0.95
     latency_ms: float = 1000
     enabled: bool = True
+    tier: ModelTier = ModelTier.PAID
+    brand: str = ""  # human-facing provider name (e.g. "groq", "ollama")
+    base_url: str | None = None  # OpenAI-compatible base URL for free/local providers
+    api_key_env: str | None = None  # env var holding the API key for this provider
+    local: bool = False  # true for models served from the local Ollama runtime
+
+
+class VerificationIssue(BaseModel):
+    severity: str = "warning"  # blocker | warning | nit
+    area: str = "general"  # facts|coding|consistency|completeness|style
+    detail: str = ""
+
+
+class VerificationReport(BaseModel):
+    task_id: str = ""
+    phase: str = "response"
+    passed: bool = False
+    score: float = 0.0
+    issues: list[VerificationIssue] = Field(default_factory=list)
+    suggestions: list[str] = Field(default_factory=list)
+    checks_run: list[str] = Field(default_factory=list)
+    model: str = ""
 
 
 class Task(BaseModel):

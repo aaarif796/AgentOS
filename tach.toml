@@ -45,9 +45,142 @@ depends_on_external = ["pydantic", "pydantic_settings"]
 path = "agentos.rules"
 depends_on = []
 
+[[modules]]
+path = "agentos.memory.models"
+depends_on = ["agentos.models"]
+depends_on_external = ["pydantic"]
+
+[[modules]]
+path = "agentos.memory.embedder"
+depends_on = []
+
+[[modules]]
+path = "agentos.memory.store"
+depends_on = ["agentos.memory.models"]
+depends_on_external = ["aiosqlite"]
+
+[[modules]]
+path = "agentos.memory.short_term"
+depends_on = ["agentos.memory.models", "agentos.memory.store"]
+
+[[modules]]
+path = "agentos.memory.long_term"
+depends_on = ["agentos.memory.embedder", "agentos.memory.models", "agentos.memory.store"]
+
+[[modules]]
+path = "agentos.memory.procedural"
+depends_on = ["agentos.memory.models", "agentos.memory.store"]
+
+[[modules]]
+path = "agentos.memory.hub"
+depends_on = [
+    "agentos.memory.embedder",
+    "agentos.memory.long_term",
+    "agentos.memory.models",
+    "agentos.memory.procedural",
+    "agentos.memory.short_term",
+    "agentos.memory.store",
+]
+
+[[modules]]
+path = "agentos.scraper"
+depends_on = ["agentos.settings"]
+depends_on_external = ["beautifulsoup4", "httpx", "pydantic"]
+
+[[modules]]
+path = "agentos.reflexion"
+depends_on = ["agentos.gateway", "agentos.models", "agentos.settings", "agentos.tools"]
+depends_on_external = ["pydantic", "structlog"]
+
+[[modules]]
+path = "agentos.bookstudio.schema"
+depends_on = ["agentos.models"]
+depends_on_external = ["pydantic"]
+
+[[modules]]
+path = "agentos.bookstudio.exporters"
+depends_on = ["agentos.bookstudio.schema"]
+depends_on_external = ["odfpy", "python-docx", "reportlab"]
+
+[[modules]]
+path = "agentos.bookstudio.pipeline"
+depends_on = [
+    "agentos.bookstudio.exporters",
+    "agentos.bookstudio.schema",
+    "agentos.gateway",
+    "agentos.memory.hub",
+    "agentos.models",
+    "agentos.reflexion",
+    "agentos.scraper",
+    "agentos.settings",
+]
+depends_on_external = ["pydantic", "structlog"]
+
+[[modules]]
+path = "agentos.slides.schema"
+depends_on = ["agentos.models"]
+depends_on_external = ["pydantic"]
+
+[[modules]]
+path = "agentos.slides.theme"
+depends_on = ["agentos.slides.schema"]
+
+[[modules]]
+path = "agentos.slides.mermaid"
+depends_on = []
+depends_on_external = ["httpx"]
+
+[[modules]]
+path = "agentos.slides.build"
+depends_on = ["agentos.slides.mermaid", "agentos.slides.schema"]
+depends_on_external = ["python-pptx"]
+
+[[modules]]
+path = "agentos.slides.pipeline"
+depends_on = [
+    "agentos.gateway",
+    "agentos.memory.hub",
+    "agentos.models",
+    "agentos.reflexion",
+    "agentos.settings",
+    "agentos.slides.build",
+    "agentos.slides.mermaid",
+    "agentos.slides.schema",
+    "agentos.slides.theme",
+]
+depends_on_external = ["pydantic", "structlog"]
+
 # ---------------------------------------------------------------------------
 # Infrastructure: built on domain primitives
 # ---------------------------------------------------------------------------
+# Package facades: public re-export surfaces (__init__.py) of sub-packages.
+[[modules]]
+path = "agentos.memory"
+depends_on = [
+    "agentos.memory.embedder",
+    "agentos.memory.hub",
+    "agentos.memory.long_term",
+    "agentos.memory.models",
+    "agentos.memory.procedural",
+    "agentos.memory.short_term",
+]
+
+[[modules]]
+path = "agentos.bookstudio"
+depends_on = [
+    "agentos.bookstudio.exporters",
+    "agentos.bookstudio.pipeline",
+    "agentos.bookstudio.schema",
+]
+
+[[modules]]
+path = "agentos.slides"
+depends_on = [
+    "agentos.slides.build",
+    "agentos.slides.pipeline",
+    "agentos.slides.schema",
+]
+
 [[modules]]
 path = "agentos.registry"
 depends_on = ["agentos.models"]
@@ -98,13 +231,19 @@ depends_on_external = ["structlog"]
 [[modules]]
 path = "agentos.orchestrator"
 depends_on = [
+    "agentos.bookstudio.pipeline",
     "agentos.events",
     "agentos.gateway",
+    "agentos.memory.hub",
     "agentos.models",
     "agentos.registry",
+    "agentos.reflexion",
     "agentos.router",
     "agentos.rules",
+    "agentos.settings",
+    "agentos.slides.pipeline",
     "agentos.store",
+    "agentos.tools",
 ]
 depends_on_external = ["pydantic", "structlog"]
 
@@ -114,27 +253,32 @@ depends_on_external = ["pydantic", "structlog"]
 [[modules]]
 path = "agentos.runtime"
 depends_on = [
+    "agentos.bookstudio.pipeline",
     "agentos.builtin_hooks",
     "agentos.events",
     "agentos.evolution",
     "agentos.gateway",
     "agentos.hooks",
     "agentos.logging",
+    "agentos.memory.hub",
     "agentos.models",
     "agentos.orchestrator",
+    "agentos.reflexion",
     "agentos.registry",
     "agentos.router",
     "agentos.rules",
+    "agentos.scraper",
     "agentos.security",
     "agentos.settings",
+    "agentos.slides.pipeline",
     "agentos.store",
     "agentos.tools",
 ]
-depends_on_external = []
+depends_on_external = ["httpx"]
 
 [[modules]]
 path = "agentos.api"
-depends_on = ["agentos.runtime"]
+depends_on = ["agentos.runtime", "agentos.models"]
 depends_on_external = ["fastapi", "pydantic"]
 
 [[modules]]
@@ -150,4 +294,10 @@ exclude = [
     "pyyaml",
     "sqlalchemy",
     "tenacity",
+    # deferred (function-level) studio exporters; mapped in pyproject.toml:
+    "bs4",       # beautifulsoup4
+    "pptx",      # python-pptx
+    "docx",      # python-docx
+    "reportlab", # reportlab
+    "odf",       # odfpy
 ]

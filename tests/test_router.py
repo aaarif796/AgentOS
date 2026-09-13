@@ -3,7 +3,7 @@ from agentos.registry import Registry
 from agentos.router import MasterRouter
 
 
-def test_router_returns_agent():
+def test_router_returns_agent() -> None:
     r = Registry()
     r.add_agent(AgentSpec(id="developer", mission="software development", capabilities=["coding"]))
     route = MasterRouter(r).route(Task(goal="build software"))

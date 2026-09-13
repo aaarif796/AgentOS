@@ -1,1 +1,34 @@
 line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "ASYNC", "S"]
+ignore = [
+  "E501",     # line length is the formatter's job
+  "BLE001",   # broad except is intentional at provider/health boundaries
+  "S110",     # try-except-pass in optional capability probes
+  "TRY004",   # ValueError for malformed verifier payloads is fine
+  "RUF007",   # zip over successive pairs is clearer here
+  "ISC004",   # implicit concat in collections is deliberate
+  "ASYNC230", # tests read small exported files
+  "S602",     # terminal tool runs through the SecurityEngine sandbox
+  "S603",     # restricted git/terminal tools, commands are allow-listed
+  "S605",     # SecurityEngine validates every shell invocation
+  "S607",     # partial executable path: only allow-listed git commands
+]
+
+[lint.per-file-ignores]
+"tests/**" = [
+  "S101",     # asserts are the point of pytest
+  "S105",     # fake verifier payloads, not credentials
+  "ASYNC240", # tiny local filesystem probes inside async tests
+]
+"src/agentos/bookstudio/pipeline.py" = [
+  "ASYNC240", # supervise persists to small local project files
+]
+
+
+[lint.pyflakes]
+extend-generics = ["pydantic"]
+

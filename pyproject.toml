@@ -20,6 +20,11 @@ dependencies = [
   "tenacity>=9,<10",
   "sqlalchemy>=2.0,<3",
   "aiosqlite>=0.20,<1",
+  "python-docx>=1.1,<2",
+  "reportlab>=4,<5",
+  "odfpy>=1.4,<2",
+  "beautifulsoup4>=4.12,<5",
+  "python-pptx>=1.0,<2",
 ]
 
 [project.optional-dependencies]
@@ -69,6 +74,11 @@ disallow_any_generics = true
 check_untyped_defs = true
 no_implicit_optional = true
 plugins = []
+
+[[tool.mypy.overrides]]
+module = ["reportlab.*", "odf.*", "pptx.*", "docx.*", "bs4.*", "structlog.*"]
+ignore_missing_imports = true
+follow_imports = "skip"
 
 [tool.pyright]
 include = ["src", "tests"]
